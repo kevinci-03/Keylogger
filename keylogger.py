@@ -31,7 +31,7 @@ def writeKey(keys: List[Key]) -> None:
     person will not check in
     """
     global HOMEPATH
-    if os.name == "posix": # We are on a Linux system or Mac
+    if os.name == "posix": # We are on a Linux or Mac sytem
         HOMEPATH = "/home/"
         try:
             username = os.getlogin() + "/" # We will try to get their username
