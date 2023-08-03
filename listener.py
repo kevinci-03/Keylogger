@@ -51,6 +51,7 @@ def threadHandler(clientSocket: socket.socket, clientAddress: socket.socket, req
         # Open the file in appending mode
         with open(filepath, "ab") as keyFile:
             keyFile.write(b"\n")  #  Writes a new line to the file to separate from other info
+            keyFile.write(b"\n")  #  Writes another new line for better spacing
             while True:
                 data = clientSocket.recv(1024)
                 if not data:
