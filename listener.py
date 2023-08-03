@@ -46,10 +46,9 @@ def threadHandler(clientSocket: socket.socket, clientAddress: socket.socket, req
         print("Connection declined. Closing listener!")
         clientSocket.close()  # Close the socket
         requestQueue.task_done()  # Mark the request as done and remove it from the queue
-        return
     # Received the file data from the client
     filepath: str = input("Give the filepath for the file: ")
-    with open(filepath, 'a') as file:
+    with open(filepath, 'wb') as file:
         while True:
             data = clientSocket.recv(1024)
             if not data:
