@@ -1,7 +1,0 @@
-To-Do:
-- Make own exceptions so program does not crash wrong - ehh not really interesting
-- Make ducky script better, and find out executable run issue, might need to switch route
-- If no ducky script then make your exe downloadable somewhere
-- Make executables at the end
-- Test on Mac and other computers
-- Start presentation
