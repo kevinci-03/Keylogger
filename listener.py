@@ -39,24 +39,29 @@ def threadHandler(clientSocket: socket.socket, clientAddress: socket.socket, req
     This is the thread handler that handles each request and
     takes it off the queue when done
     """
-    # Check the incoming connection and see if we want to accept it
-    print(f"Incoming connection from {clientAddress}")
-    acept: str = input("Do you want to accept the connection? (y|n): ")
-    if acept.lower() != "y":
-        print("Connection declined. Closing listener!")
+    try:
+        # Check the incoming connection and see if we want to accept it
+        print(f"Incoming connection from {clientAddress}")
+        acept: str = input("Do you want to accept the connection? (y|n): ")
+        if acept.lower() != "y":
+            print("Connection declined. Closing listener!")
+            raise RuntimeError("Connection was closed by user")
+        # Received the file data from the client
+        filepath: str = input("Give the filepath for the file: ")
+        # Open the file in appending mode
+        with open(filepath, "ab") as keyFile:
+            keyFile.write(b"\n")  #  Writes a new line to the file to separate from other info
+            while True:
+                data = clientSocket.recv(1024)
+                if not data:
+                    break
+                keyFile.write(data)
+        print(f"File received succesfully from {clientAddress}") # Message to see if file was received
+    except Exception as e:
+        print(f"Error occurred during file reception from {clientAddress}: {e}")
+    finally:
         clientSocket.close()  # Close the socket
         requestQueue.task_done()  # Mark the request as done and remove it from the queue
-    # Received the file data from the client
-    filepath: str = input("Give the filepath for the file: ")
-    with open(filepath, 'wb') as file:
-        while True:
-            data = clientSocket.recv(1024)
-            if not data:
-                break
-            file.write(data)
-    print(f"File received succesfully from {clientAddress}") # Debug message to see if file was received
-    clientSocket.close()  # Close the socket
-    requestQueue.task_done()  # Mark the request as done and remove it from the queue
 
 def prompt(host: str, port: int) -> None:
     """
