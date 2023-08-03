@@ -141,7 +141,6 @@ def sendFile(host: str, port: int, filepath: str) -> None:
     # Trying to send the file
     try:
         with socket.create_connection((host, port)) as clientSocket:  # Try to connect to the host
-            print(f"Connected to {host}:{port}")  # Debug print for now to ensure that it connected
             # Send the file data to the computer
             with open(filepath, 'rb') as newFile:
                 while True:
@@ -149,7 +148,6 @@ def sendFile(host: str, port: int, filepath: str) -> None:
                     if not data:
                         break
                     clientSocket.sendall(data)  # Send all the data to the server
-            print("File sent successfully!")  # Debug print for now to ensure that it sent
     except Exception:
             return
 
